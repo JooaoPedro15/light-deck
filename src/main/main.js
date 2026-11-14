@@ -312,7 +312,7 @@ function sampleMetrics() {
   const perSlot = {};
   for (const [id, pid] of slots.pids()) {
     const proc = byPid.get(pid);
-    if (proc) perSlot[id] = proc.cpu.percentCPUUsage / cores;
+    if (proc) perSlot[id] = { cpu: proc.cpu.percentCPUUsage / cores, memMb: proc.memory.workingSetSize / 1024 };
   }
   // Dividir pelos núcleos dá o mesmo número que o Gerenciador de Tarefas mostra.
   win.webContents.send('metrics', { cpu: cpu / cores, memMb: memKb / 1024, slots: perSlot });

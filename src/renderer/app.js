@@ -74,7 +74,7 @@ function renderSidebar() {
         },
           el('span', { class: `dot ${status}` }),
           el('span', { class: 'name', text: slot.name }),
-          rt ? el('span', { class: 'tag cpu', title: 'CPU usada por esta conta', data: { cpuId: slot.id } }) : null,
+          rt ? el('span', { class: 'tag cpu', title: 'CPU e RAM usadas por esta conta', data: { cpuId: slot.id } }) : null,
           muted && rt ? el('span', { class: 'tag', text: 'mudo' }) : null,
           !slot.eco ? el('span', { class: 'tag', title: 'Economia desligada para esta conta', text: '100%' }) : null,
         ),
@@ -136,8 +136,8 @@ function renderMetrics() {
   const mem = metrics.memMb >= 1024 ? `${(metrics.memMb / 1024).toFixed(1).replace('.', ',')} GB` : `${Math.round(metrics.memMb)} MB`;
   $('#meter').textContent = `CPU ${percent(metrics.cpu)} · RAM ${mem}`;
   for (const tag of document.querySelectorAll('.cpu[data-cpu-id]')) {
-    const value = metrics.slots[tag.dataset.cpuId];
-    tag.textContent = value == null ? '' : percent(value);
+    const usage = metrics.slots[tag.dataset.cpuId];
+    tag.textContent = usage ? `${percent(usage.cpu)} · ${Math.round(usage.memMb)} MB` : '';
   }
 }
 

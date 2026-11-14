@@ -1,0 +1,16 @@
+{
+  "name": "deck-plus",
+  "productName": "Deck Plus",
+  "version": "0.1.0",
+  "description": "Navegador multi-conta leve para jogos idle de navegador",
+  "main": "src/main/main.js",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "electron": "^45.3.2"
+  }
+}

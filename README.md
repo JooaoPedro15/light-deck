@@ -71,9 +71,19 @@ Vale igual para Windows (PowerShell ou Prompt) e macOS (Terminal).
 
 ## Desenvolvimento
 
+Rodar os testes:
+
 ```bash
 npm test
 ```
+
+Gerar o instalador do sistema em que você está (sai na pasta `dist`):
+
+```bash
+npm run dist
+```
+
+No Windows gera um `.exe`; no macOS gera um `.dmg`. O instalador do Mac só pode ser gerado em um Mac, ou pelo GitHub Actions (aba **Actions → Instaladores → Run workflow**), que gera os dois.
 
 Feito com [Electron](https://www.electronjs.org), JavaScript puro, sem framework.
 

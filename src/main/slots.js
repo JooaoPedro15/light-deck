@@ -10,8 +10,19 @@
 const { WebContentsView, session } = require('electron');
 
 const VIEW_BACKGROUND = '#0f1117';
-// Permissões que as páginas dos jogos podem usar sem perguntar. O resto é negado.
-const ALLOWED_PERMISSIONS = new Set(['fullscreen', 'pointerLock', 'clipboard-sanitized-write']);
+// Permissões que as páginas dos jogos podem usar sem perguntar. O resto é negado
+// (câmera, microfone, localização, dispositivos USB...).
+const ALLOWED_PERMISSIONS = new Set([
+  'fullscreen',
+  'pointerLock',
+  'clipboard-sanitized-write',
+  'notifications',
+  'storage-access',
+  'top-level-storage-access',
+]);
+// Depois de carregar, a página roda em velocidade total por este tempo antes da economia ligar.
+// Verificações feitas no carregamento (ex.: "não sou um robô") têm prazo e falham com timers lentos.
+const WARMUP_MS = 45000;
 
 // "persist:" faz a sessão ficar gravada em disco (o login sobrevive a fechar o app).
 function partitionOf(slotId) {
@@ -64,7 +75,11 @@ class Slots {
         .replace(/\sElectron\/\S+/, '')
         .replace(/(\(KHTML, like Gecko\)) .*?(Chrome\/)/, '$1 $2'),
     );
-    ses.setPermissionRequestHandler((_wc, permission, done) => done(ALLOWED_PERMISSIONS.has(permission)));
+    ses.setPermissionRequestHandler((_wc, permission, done, details) => {
+      // Notificação só para a página principal, nunca para anúncios dentro dela.
+      if (permission === 'notifications' && details && details.isMainFrame === false) return done(false);
+      return done(ALLOWED_PERMISSIONS.has(permission));
+    });
     ses.setPermissionCheckHandler((_wc, permission) => ALLOWED_PERMISSIONS.has(permission));
   }
 
@@ -83,8 +98,9 @@ class Slots {
         nodeIntegration: false,
         webviewTag: false,
         spellcheck: false,
-        // true = o Chromium pode desacelerar a página quando ela não está visível.
-        backgroundThrottling: slot.eco,
+        // false = velocidade total mesmo oculta. Começa assim (aquecimento) e a economia
+        // é ligada depois por applyEco().
+        backgroundThrottling: false,
       },
     });
     view.setBackgroundColor(VIEW_BACKGROUND);
@@ -93,7 +109,7 @@ class Slots {
     view.setBounds({ x: 0, y: 0, width: 1024, height: 640 });
     this.win.contentView.addChildView(view);
 
-    const rt = { view, loading: true, crashed: false };
+    const rt = { view, loading: true, crashed: false, warming: true, warmTimer: null };
     this.runtimes.set(id, rt);
 
     const wc = view.webContents;
@@ -121,6 +137,26 @@ class Slots {
       Object.assign(rt, patch);
       this.onChange();
     };
+    // Aquecimento: a cada carregamento da página principal, velocidade total;
+    // WARMUP_MS depois de terminar, a economia volta.
+    const coolDown = () => {
+      clearTimeout(rt.warmTimer);
+      rt.warmTimer = setTimeout(() => {
+        rt.warming = false;
+        this.applyEco(id);
+      }, WARMUP_MS);
+    };
+    wc.on('did-start-navigation', (details) => {
+      if (!details.isMainFrame || details.isSameDocument) return;
+      clearTimeout(rt.warmTimer);
+      rt.warming = true;
+      this.applyEco(id);
+    });
+    wc.on('did-finish-load', coolDown);
+    wc.on('did-fail-load', (_event, _code, _text, _url, isMainFrame) => {
+      if (isMainFrame) coolDown();
+    });
+
     wc.on('did-start-loading', () => setState({ loading: true }));
     wc.on('did-stop-loading', () => setState({ loading: false, crashed: false }));
     wc.on('render-process-gone', () => setState({ loading: false, crashed: true }));
@@ -133,6 +169,7 @@ class Slots {
   stop(id) {
     const rt = this.runtimes.get(id);
     if (!rt) return;
+    clearTimeout(rt.warmTimer);
     this.runtimes.delete(id);
     this.rects.delete(id);
     if (!this.win.isDestroyed()) this.win.contentView.removeChildView(rt.view);
@@ -168,7 +205,9 @@ class Slots {
   applyEco(id) {
     const rt = this.runtimes.get(id);
     const slot = this.getSlot(id);
-    if (rt && slot && !rt.view.webContents.isDestroyed()) rt.view.webContents.setBackgroundThrottling(slot.eco);
+    if (!rt || !slot || rt.view.webContents.isDestroyed()) return;
+    // Só economiza se a conta pede economia e o aquecimento já acabou.
+    rt.view.webContents.setBackgroundThrottling(slot.eco && !rt.warming);
   }
 
   // A interface manda onde cada conta visível deve ficar. Quem não veio na lista fica oculto.

@@ -88,4 +88,8 @@ Feito com [Electron](https://www.electronjs.org), JavaScript puro, sem framework
 
 Projeto independente, escrito do zero, **sem vínculo com o IdleDeck** nem com os jogos citados. Confira as regras de cada jogo antes de usar várias contas.
 
+## Licença
+
+[MIT](LICENSE): pode usar, copiar e modificar à vontade.
+
 Gostou? Deixe uma estrela no repositório, ajuda outras pessoas a encontrarem.

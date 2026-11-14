@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'">
+  <title>Light Deck</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside id="sidebar">
+    <header class="brand">
+      <span class="brand-name">Light Deck</span>
+      <button id="btn-mute-all" class="icon-btn" type="button" title="Silenciar tudo">Som</button>
+      <button id="btn-settings" class="icon-btn" type="button" title="Configurações">Config</button>
+    </header>
+    <nav id="groups" aria-label="Contas"></nav>
+    <footer class="side-footer">
+      <button id="btn-add-slot" class="primary" type="button">+ Conta</button>
+      <button id="btn-add-group" type="button">+ Grupo</button>
+    </footer>
+  </aside>
+
+  <main id="content">
+    <header id="toolbar">
+      <span id="title"></span>
+      <span id="meter" title="Uso total do Light Deck somando todas as contas (mesmo número do Gerenciador de Tarefas)"></span>
+      <button id="btn-reload" type="button" title="Recarregar a conta em foco">Recarregar</button>
+      <div class="segmented" role="group" aria-label="Modo de exibição">
+        <button id="btn-focus" type="button" title="Mostra só a conta em foco (mais econômico)">Foco</button>
+        <button id="btn-grid" type="button" title="Mostra todas as contas rodando do grupo">Grade</button>
+      </div>
+    </header>
+    <section id="stage"></section>
+  </main>
+
+  <dialog id="dialog">
+    <form id="dialog-form" method="dialog"></form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

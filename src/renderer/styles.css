@@ -1,0 +1,197 @@
+:root {
+  --bg: #0f1117;
+  --panel: #161a23;
+  --panel-2: #1e2330;
+  --line: #2a3040;
+  --text: #e6e8ee;
+  --muted: #8b93a7;
+  --accent: #7c5cff;
+  --ok: #3ecf8e;
+  --warn: #f0b429;
+  --bad: #ef5b5b;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 232px 1fr;
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+  overflow: hidden;
+  user-select: none;
+}
+
+button {
+  font: inherit;
+  color: var(--text);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+button:hover { border-color: var(--accent); }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+button:disabled { opacity: .45; cursor: default; border-color: var(--line); }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ---------- barra lateral ---------- */
+
+#sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.brand-name { flex: 1; font-weight: 600; font-size: 14px; }
+.icon-btn { padding: 3px 7px; font-size: 12px; }
+
+#groups { flex: 1; overflow-y: auto; padding: 6px; }
+
+.group-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px 4px;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.group-head span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.group-head button { padding: 0 6px; font-size: 12px; background: none; border-color: transparent; color: var(--muted); }
+.group-head button:hover { color: var(--text); border-color: var(--line); }
+
+.slot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  margin-bottom: 2px;
+  text-align: left;
+  background: none;
+  border-color: transparent;
+}
+.slot:hover { background: var(--panel-2); border-color: transparent; }
+.slot.active { background: var(--panel-2); border-color: var(--accent); }
+.slot .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.slot .tag { color: var(--muted); font-size: 11px; }
+
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); flex: none; }
+.dot.running { background: var(--ok); }
+.dot.loading { background: var(--warn); }
+.dot.crashed { background: var(--bad); }
+
+.empty-note { padding: 4px 8px 8px; color: var(--muted); font-size: 12px; }
+
+.side-footer {
+  display: flex;
+  gap: 6px;
+  padding: 10px;
+  border-top: 1px solid var(--line);
+}
+.side-footer button { flex: 1; }
+
+/* ---------- área dos jogos ---------- */
+
+#content { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+
+#toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--line);
+  flex: none;
+}
+#title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); }
+
+#meter {
+  flex: none;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+#meter:empty { display: none; }
+.slot .cpu { font-variant-numeric: tabular-nums; }
+
+.segmented { display: flex; }
+.segmented button { border-radius: 0; }
+.segmented button:first-child { border-radius: 6px 0 0 6px; }
+.segmented button:last-child { border-radius: 0 6px 6px 0; margin-left: -1px; }
+
+#stage {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  gap: 4px;
+  padding: 4px;
+  grid-template-columns: repeat(var(--cols, 1), minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+}
+
+/* A página do jogo é colada por cima da célula pelo processo principal. */
+.cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 0;
+  border: 1px dashed var(--line);
+  border-radius: 6px;
+  color: var(--muted);
+  text-align: center;
+}
+.cell strong { color: var(--text); font-size: 15px; }
+
+/* ---------- diálogos ---------- */
+
+dialog {
+  width: 380px;
+  padding: 0;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+dialog::backdrop { background: rgba(0, 0, 0, .55); }
+
+#dialog-form { display: flex; flex-direction: column; gap: 12px; padding: 18px; }
+#dialog-form h2 { margin: 0; font-size: 15px; }
+#dialog-form label { display: flex; flex-direction: column; gap: 4px; color: var(--muted); font-size: 12px; }
+#dialog-form label.check { flex-direction: row; align-items: center; gap: 8px; color: var(--text); font-size: 13px; }
+#dialog-form input[type="text"], #dialog-form select {
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 7px 8px;
+  user-select: text;
+}
+#dialog-form .hint { margin: 0; color: var(--muted); font-size: 12px; }
+#dialog-form .error { margin: 0; color: var(--bad); font-size: 12px; min-height: 1em; }
+#dialog-form .actions { display: flex; justify-content: flex-end; gap: 8px; }

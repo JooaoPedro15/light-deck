@@ -49,7 +49,7 @@ test('normalize descarta contas inválidas e conserta o grupo', () => {
 });
 
 test('Store grava e lê de volta', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'deck-plus-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'light-deck-'));
   const file = path.join(dir, 'config.json');
   const a = new Store(file);
   a.load();

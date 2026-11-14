@@ -1,6 +1,6 @@
 {
-  "name": "deck-plus",
-  "productName": "Deck Plus",
+  "name": "light-deck",
+  "productName": "Light Deck",
   "version": "0.1.0",
   "description": "Navegador multi-conta leve para jogos idle de navegador",
   "main": "src/main/main.js",

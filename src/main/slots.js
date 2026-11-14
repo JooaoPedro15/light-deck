@@ -69,12 +69,8 @@ class Slots {
     if (this.prepared.has(partition)) return;
     this.prepared.add(partition);
     const ses = session.fromPartition(partition);
-    // Tira "Electron/x" e o nome do app do user agent: alguns sites recusam login quando veem isso.
-    ses.setUserAgent(
-      ses.getUserAgent()
-        .replace(/\sElectron\/\S+/, '')
-        .replace(/(\(KHTML, like Gecko\)) .*?(Chrome\/)/, '$1 $2'),
-    );
+    // O user agent fica o original do Electron, sem disfarce. Trocar para "parecer Chrome"
+    // deixa o navegador inconsistente e faz a verificação anti-robô dos sites falhar.
     ses.setPermissionRequestHandler((_wc, permission, done, details) => {
       // Notificação só para a página principal, nunca para anúncios dentro dela.
       if (permission === 'notifications' && details && details.isMainFrame === false) return done(false);

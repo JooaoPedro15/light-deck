@@ -3,14 +3,58 @@
   "productName": "Light Deck",
   "version": "0.1.0",
   "description": "Navegador multi-conta leve para jogos idle de navegador",
+  "author": "João Pedro Costa e Silva",
   "main": "src/main/main.js",
   "private": true,
   "license": "MIT",
   "scripts": {
     "start": "electron .",
-    "test": "node --test"
+    "test": "node --test",
+    "icon": "node scripts/make-icon.js",
+    "dist": "electron-builder --publish never"
+  },
+  "build": {
+    "appId": "io.github.jooaopedro15.lightdeck",
+    "productName": "Light Deck",
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "artifactName": "Light-Deck-Setup-${version}.${ext}"
+    },
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "artifactName": "Light-Deck-${version}-${arch}.${ext}"
+    }
   },
   "devDependencies": {
-    "electron": "^45.3.2"
+    "electron": "^45.3.2",
+    "electron-builder": "^26.18.0"
   }
 }

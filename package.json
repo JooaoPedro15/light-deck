@@ -1,7 +1,7 @@
 {
   "name": "light-deck",
   "productName": "Light Deck",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Navegador multi-conta leve para jogos idle de navegador",
   "author": "João Pedro Costa e Silva",
   "main": "src/main/main.js",

@@ -1,5 +1,6 @@
 # Gera os instaladores do Light Deck para Windows e macOS.
-# Roda manualmente (aba Actions > Instaladores > Run workflow) ou ao criar uma tag v*.
+# - Ao criar uma tag v* (ex.: v0.1.1): gera e anexa os instaladores numa Release do GitHub.
+# - Manualmente (aba Actions > Instaladores > Run workflow): gera e deixa como artefato do workflow.
 name: Instaladores
 
 on:
@@ -9,7 +10,7 @@ on:
       - 'v*'
 
 permissions:
-  contents: read
+  contents: write # necessário para criar a Release e anexar arquivos
 
 jobs:
   build:
@@ -37,3 +38,14 @@ jobs:
             dist/*.exe
             dist/*.dmg
           if-no-files-found: error
+      - name: Anexar na Release
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          # Os dois sistemas rodam em paralelo: quem chegar primeiro cria a Release.
+          gh release create "$TAG" --title "Light Deck $TAG" --generate-notes || true
+          shopt -s nullglob
+          gh release upload "$TAG" dist/*.exe dist/*.dmg --clobber

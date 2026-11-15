@@ -2,7 +2,6 @@
 // Processo principal: cria a janela, a bandeja e atende os pedidos da interface.
 
 const { app, BrowserWindow, ipcMain, Menu, Tray, dialog, session } = require('electron');
-const os = require('os');
 const path = require('path');
 const { Store, cleanUrl, cleanName, newId, isId } = require('./config');
 const { Slots, partitionOf } = require('./slots');
@@ -300,22 +299,22 @@ function applyLoginItem() {
 
 function sampleMetrics() {
   if (!win || win.isDestroyed()) return;
-  const cores = os.cpus().length || 1;
   const byPid = new Map();
   let cpu = 0;
   let memKb = 0;
   for (const proc of app.getAppMetrics()) {
-    cpu += proc.cpu.percentCPUUsage; // 100 = um núcleo inteiro
+    // O Electron já entrega em % do total da máquina (100 = todos os núcleos cheios),
+    // a mesma escala do Gerenciador de Tarefas. Não dividir de novo pelos núcleos.
+    cpu += proc.cpu.percentCPUUsage;
     memKb += proc.memory.workingSetSize;
     byPid.set(proc.pid, proc);
   }
   const perSlot = {};
   for (const [id, pid] of slots.pids()) {
     const proc = byPid.get(pid);
-    if (proc) perSlot[id] = { cpu: proc.cpu.percentCPUUsage / cores, memMb: proc.memory.workingSetSize / 1024 };
+    if (proc) perSlot[id] = { cpu: proc.cpu.percentCPUUsage, memMb: proc.memory.workingSetSize / 1024 };
   }
-  // Dividir pelos núcleos dá o mesmo número que o Gerenciador de Tarefas mostra.
-  win.webContents.send('metrics', { cpu: cpu / cores, memMb: memKb / 1024, slots: perSlot });
+  win.webContents.send('metrics', { cpu, memMb: memKb / 1024, slots: perSlot });
 }
 
 function setMetering(on) {

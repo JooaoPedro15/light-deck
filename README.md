@@ -26,7 +26,26 @@ Deixar vários jogos idle abertos costuma comer o processador inteiro, mesmo com
 
 ## Como instalar
 
-Ainda não há instalador pronto; por enquanto roda a partir do código. São 3 comandos.
+### Jeito fácil: baixar o instalador
+
+1. Abra a página de **[Releases](https://github.com/JooaoPedro15/light-deck/releases/latest)**.
+2. Em **Assets**, baixe o arquivo do seu sistema:
+   - **Windows**: `Light-Deck-Setup-x.y.z.exe`
+   - **Mac com chip Apple (M1, M2, M3...)**: `Light-Deck-x.y.z-arm64.dmg`
+   - **Mac com Intel**: `Light-Deck-x.y.z-x64.dmg`
+3. Abra o arquivo baixado.
+
+**Windows:** se aparecer "O Windows protegeu o computador", clique em **Mais informações → Executar assim mesmo**. O aviso aparece porque o app ainda não tem assinatura digital paga; não é vírus. O app instala sozinho e cria atalho na área de trabalho.
+
+**Mac:** arraste o Light Deck para **Aplicativos**. Na primeira vez, clique com o **botão direito** no app → **Abrir** → **Abrir**. Se o Mac disser que o app "está danificado", rode no Terminal:
+
+```bash
+xattr -cr "/Applications/Light Deck.app"
+```
+
+### Jeito avançado: rodar pelo código
+
+São 3 comandos.
 
 ### 1. Instale o que precisa
 
